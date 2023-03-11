@@ -33,6 +33,8 @@
             this.textBoxDrugi = new System.Windows.Forms.TextBox();
             this.buttonPlus = new System.Windows.Forms.Button();
             this.buttonMinus = new System.Windows.Forms.Button();
+            this.buttonDeljenje = new System.Windows.Forms.Button();
+            this.buttonMnozenje = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxPrvi
@@ -70,7 +72,7 @@
             // buttonMinus
             // 
             this.buttonMinus.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonMinus.Location = new System.Drawing.Point(278, 205);
+            this.buttonMinus.Location = new System.Drawing.Point(272, 205);
             this.buttonMinus.Name = "buttonMinus";
             this.buttonMinus.Size = new System.Drawing.Size(76, 55);
             this.buttonMinus.TabIndex = 4;
@@ -78,11 +80,35 @@
             this.buttonMinus.UseVisualStyleBackColor = true;
             this.buttonMinus.Click += new System.EventHandler(this.buttonMinus_Click);
             // 
+            // buttonDeljenje
+            // 
+            this.buttonDeljenje.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonDeljenje.Location = new System.Drawing.Point(518, 205);
+            this.buttonDeljenje.Name = "buttonDeljenje";
+            this.buttonDeljenje.Size = new System.Drawing.Size(76, 55);
+            this.buttonDeljenje.TabIndex = 5;
+            this.buttonDeljenje.Text = "/";
+            this.buttonDeljenje.UseVisualStyleBackColor = true;
+            this.buttonDeljenje.Click += new System.EventHandler(this.buttonDeljenje_Click);
+            // 
+            // buttonMnozenje
+            // 
+            this.buttonMnozenje.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonMnozenje.Location = new System.Drawing.Point(389, 205);
+            this.buttonMnozenje.Name = "buttonMnozenje";
+            this.buttonMnozenje.Size = new System.Drawing.Size(76, 55);
+            this.buttonMnozenje.TabIndex = 7;
+            this.buttonMnozenje.Text = "*";
+            this.buttonMnozenje.UseVisualStyleBackColor = true;
+            this.buttonMnozenje.Click += new System.EventHandler(this.buttonMnozenje_Click);
+            // 
             // FormVeliki
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.buttonMnozenje);
+            this.Controls.Add(this.buttonDeljenje);
             this.Controls.Add(this.buttonMinus);
             this.Controls.Add(this.buttonPlus);
             this.Controls.Add(this.textBoxDrugi);
@@ -102,5 +128,7 @@
         private System.Windows.Forms.TextBox textBoxDrugi;
         private System.Windows.Forms.Button buttonPlus;
         private System.Windows.Forms.Button buttonMinus;
+        private System.Windows.Forms.Button buttonDeljenje;
+        private System.Windows.Forms.Button buttonMnozenje;
     }
 }

@@ -20,6 +20,54 @@ namespace kalkulatori__rimski__imaginarni__veliki_
             InitializeComponent();
         }
 
+        public struct BigDecimal
+        {
+            public BigInteger Integer { get; set; }
+            public BigInteger Scale { get; set; }
+
+            public BigDecimal(BigInteger integer, BigInteger scale) : this()
+            {
+                Integer = integer;
+                Scale = scale;
+                while (Scale > 0 && Integer % 10 == 0)
+                {
+                    Integer /= 10;
+                    Scale -= 1;
+                }
+            }
+
+            public static implicit operator BigDecimal(decimal a)
+            {
+                BigInteger integer = (BigInteger)a;
+                BigInteger scale = 0;
+                decimal scaleFactor = 1m;
+                while ((decimal)integer != a * scaleFactor)
+                {
+                    scale += 1;
+                    scaleFactor *= 10;
+                    integer = (BigInteger)(a * scaleFactor);
+                }
+                return new BigDecimal(integer, scale);
+            }
+
+            public static BigDecimal operator *(BigDecimal a, BigDecimal b)
+            {
+                return new BigDecimal(a.Integer * b.Integer, a.Scale + b.Scale);
+            }
+
+            public override string ToString()
+            {
+                string s = Integer.ToString();
+                if (Scale != 0)
+                {
+                    if (Scale > Int32.MaxValue) return "[Undisplayable]";
+                    int decimalPos = s.Length - (int)Scale;
+                    s = s.Insert(decimalPos, decimalPos == 0 ? "0." : ".");
+                }
+                return s;
+            }
+        }
+
         static List<int>[] IstiNapred(List<int> A,
                                       List<int> B)
         {
@@ -175,7 +223,7 @@ namespace kalkulatori__rimski__imaginarni__veliki_
             int N = Celi1.Count;
             int M = Celi2.Count;
             i = 0;
-            
+
 
             while (i < N && i < M)
             {
@@ -259,7 +307,7 @@ namespace kalkulatori__rimski__imaginarni__veliki_
             int m = Deci2.Count;
             i = 0;
             int ostatak = 0;
-            if(VeciBroj(s1, s2) == s1)
+            if (VeciBroj(s1, s2) == s1)
             {
                 while (i < n && i < m)
                 {
@@ -293,7 +341,7 @@ namespace kalkulatori__rimski__imaginarni__veliki_
                     i++;
                 }
             }
-            
+
             //ostatak = 0;
             string celi;
             string decimalni;
@@ -348,7 +396,23 @@ namespace kalkulatori__rimski__imaginarni__veliki_
                 return '-' + celi + '.' + decimalni;
             }
         }
-        
+        static string Kolicnik(string s1, string s2)
+        {
+            BigInteger x = new BigInteger(Convert.ToDouble(s1));
+            BigInteger y = new BigInteger(Convert.ToDouble(s2));
+            return Math.Exp(BigInteger.Log(x) - BigInteger.Log(y)).ToString();
+
+        }
+        static string Proizvod(string s1, string s2)
+        {
+            decimal d1 = Convert.ToDecimal(s1);
+            decimal d2 = Convert.ToDecimal(s2);
+            // MessageBox.Show((d1 * d2).ToString()); // OverflowException
+            BigDecimal bd1 = d1;
+            BigDecimal bd2 = d2;
+            return ((bd1 * bd2).ToString()); // 252602734305022989458258125319270.5452949161059356
+        }
+
 
 
         //izbacuje mi 6 i 7 kad pokusam da radim sa -
@@ -361,5 +425,15 @@ namespace kalkulatori__rimski__imaginarni__veliki_
         {
             textBoxRezultat.Text = Razlika(textBoxPrvi.Text, textBoxDrugi.Text);
         }
+
+        private void buttonDeljenje_Click(object sender, EventArgs e)
+        {
+            textBoxRezultat.Text = Kolicnik(textBoxPrvi.Text, textBoxDrugi.Text);
+        }
+        private void buttonMnozenje_Click(object sender, EventArgs e)
+        {
+            textBoxRezultat.Text = Proizvod(textBoxPrvi.Text, textBoxDrugi.Text);
+        }
+
     }
 }
