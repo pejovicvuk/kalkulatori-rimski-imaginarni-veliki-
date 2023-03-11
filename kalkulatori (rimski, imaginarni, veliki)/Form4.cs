@@ -60,7 +60,7 @@ namespace kalkulatori__rimski__imaginarni__veliki_
                 string s = Integer.ToString();
                 if (Scale != 0)
                 {
-                    if (Scale > Int32.MaxValue) return "[Undisplayable]";
+                    if (Scale > Int32.MaxValue) return "ne moze";
                     int decimalPos = s.Length - (int)Scale;
                     s = s.Insert(decimalPos, decimalPos == 0 ? "0." : ".");
                 }
@@ -93,8 +93,6 @@ namespace kalkulatori__rimski__imaginarni__veliki_
             return new[] { A, B };
         }
 
-        // Function to make Integral part
-        // with equal digits
         static List<int>[] IstiNazad(List<int> A,
                                            List<int> B)
         {
