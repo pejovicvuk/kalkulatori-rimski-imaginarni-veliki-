@@ -15,58 +15,12 @@ namespace kalkulatori__rimski__imaginarni__veliki_
 {
     public partial class FormVeliki : Form
     {
+
         public FormVeliki()
         {
             InitializeComponent();
         }
 
-        public struct BigDecimal
-        {
-            public BigInteger Integer { get; set; }
-            public BigInteger Scale { get; set; }
-
-            public BigDecimal(BigInteger integer, BigInteger scale) : this()
-            {
-                Integer = integer;
-                Scale = scale;
-                while (Scale > 0 && Integer % 10 == 0)
-                {
-                    Integer /= 10;
-                    Scale -= 1;
-                }
-            }
-
-            public static implicit operator BigDecimal(decimal a)
-            {
-                BigInteger integer = (BigInteger)a;
-                BigInteger scale = 0;
-                decimal scaleFactor = 1m;
-                while ((decimal)integer != a * scaleFactor)
-                {
-                    scale += 1;
-                    scaleFactor *= 10;
-                    integer = (BigInteger)(a * scaleFactor);
-                }
-                return new BigDecimal(integer, scale);
-            }
-
-            public static BigDecimal operator *(BigDecimal a, BigDecimal b)
-            {
-                return new BigDecimal(a.Integer * b.Integer, a.Scale + b.Scale);
-            }
-
-            public override string ToString()
-            {
-                string s = Integer.ToString();
-                if (Scale != 0)
-                {
-                    if (Scale > Int32.MaxValue) return "ne moze";
-                    int decimalPos = s.Length - (int)Scale;
-                    s = s.Insert(decimalPos, decimalPos == 0 ? "0." : ".");
-                }
-                return s;
-            }
-        }
 
         static List<int>[] IstiNapred(List<int> A,
                                       List<int> B)
@@ -394,26 +348,95 @@ namespace kalkulatori__rimski__imaginarni__veliki_
                 return '-' + celi + '.' + decimalni;
             }
         }
-        static string Kolicnik(string s1, string s2)
+
+        public static string Proizvod(string s1, string s2)
         {
-            BigInteger x = new BigInteger(Convert.ToDouble(s1));
-            BigInteger y = new BigInteger(Convert.ToDouble(s2));
-            return Math.Exp(BigInteger.Log(x) - BigInteger.Log(y)).ToString();
+            s1 = s1.TrimStart('0').TrimEnd('.');
+            s2 = s2.TrimStart('0').TrimEnd('.');
 
+            int s1Decimale = s1.Length - s1.IndexOf('.') - 1;
+            int s2Decimale = s2.Length - s2.IndexOf('.') - 1;
+
+            s1 = s1.Replace(".", "");
+            s2 = s2.Replace(".", "");
+
+            int[] rez = new int[s1.Length + s2.Length];
+
+            for (int i = s2.Length - 1; i >= 0; i--)
+            {
+                int ostatak = 0;
+
+                for (int j = s1.Length - 1; j >= 0; j--)
+                {
+                    int proizvod = (s2[i] - '0') * (s1[j] - '0') + ostatak + rez[i + j + 1];
+                    ostatak = proizvod / 10;
+                    rez[i + j + 1] = proizvod % 10;
+                }
+                rez[i] += ostatak;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int k = 0;
+
+            while (k < rez.Length && rez[k] == 0)
+            {
+                k++;
+            }
+            if (k == rez.Length)
+            {
+                return "0";
+            }
+
+            while (k < rez.Length - s1Decimale - s2Decimale)
+            {
+                sb.Append(rez[k++]);
+            }
+
+            if (s1Decimale + s2Decimale > 0)
+            {
+                sb.Append(".");
+            }
+
+            while (k < rez.Length)
+            {
+                sb.Append(rez[k++]);
+            }
+
+            return sb.ToString();
         }
-        static string Proizvod(string s1, string s2)
+        public static string Kolicnik(string s1, string s2, int brojDecimala)
         {
-            decimal d1 = Convert.ToDecimal(s1);
-            decimal d2 = Convert.ToDecimal(s2);
-            // MessageBox.Show((d1 * d2).ToString()); // OverflowException
-            BigDecimal bd1 = d1;
-            BigDecimal bd2 = d2;
-            return ((bd1 * bd2).ToString()); // 252602734305022989458258125319270.5452949161059356
+            try
+            {
+                int scale = brojDecimala;
+                BigInteger d1 = BigInteger.Parse(s1.Replace(".", ""));
+                BigInteger d2 = BigInteger.Parse(s2.Replace(".", ""));
+                BigInteger rez = BigInteger.Divide(d1, d2);
+                BigInteger ostatak = BigInteger.Remainder(d1, d2);
+                string rezString = rez.ToString();
+                string ostatakString = ostatak.ToString().PadLeft(scale, '0');
+                string tacka = ".";
+                if (scale > 0)
+                {
+                    rezString += tacka;
+                    for (int i = 0; i < scale; i++)
+                    {
+                        ostatak *= 10;
+                        BigInteger digit = BigInteger.Divide(ostatak, d2);
+                        rezString += digit.ToString();
+                        ostatak = BigInteger.Remainder(ostatak, d2);
+                    }
+                }
+                return rezString;
+            }
+            catch (System.DivideByZeroException)
+            {
+                MessageBox.Show("ne moze deljenje sa nulom");
+                return string.Empty;
+            }
         }
 
 
-
-        //izbacuje mi 6 i 7 kad pokusam da radim sa -
         private void buttonPlus_Click(object sender, EventArgs e)
         {
             textBoxRezultat.Text = Zbir(textBoxPrvi.Text, textBoxDrugi.Text);
@@ -426,7 +449,7 @@ namespace kalkulatori__rimski__imaginarni__veliki_
 
         private void buttonDeljenje_Click(object sender, EventArgs e)
         {
-            textBoxRezultat.Text = Kolicnik(textBoxPrvi.Text, textBoxDrugi.Text);
+            textBoxRezultat.Text = Kolicnik(textBoxPrvi.Text, textBoxDrugi.Text, 50);
         }
         private void buttonMnozenje_Click(object sender, EventArgs e)
         {
